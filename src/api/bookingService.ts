@@ -1,4 +1,5 @@
 // src/api/bookingService.ts
+import { sheetsService, type BookingData } from './sheetsService';
 
 // This reads the VITE_API_BASE_URL from your .env.local file
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -25,27 +26,52 @@ export interface BlockedDate {
 }
 
 /**
- * Submits a new booking to the backend.
+ * Submits a new booking to the backend and saves to sheets.
  * @param bookingData - The data from the booking form.
  * @returns The server's response.
  */
 export const createBooking = async (bookingData: unknown) => {
   try {
-    const response = await fetch(`${apiUrl}/bookings`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bookingData),
-    });
+    // Generate a unique booking ID
+    const bookingId = 'BK' + Date.now().toString().slice(-6);
+    
+    // Prepare booking data for sheets
+    const formattedBookingData: BookingData = {
+      id: bookingId,
+      ...(bookingData as any),
+      status: 'pending' as const,
+      createdAt: new Date().toISOString(),
+    };
 
-    if (!response.ok) {
-      // If the server response is not OK, throw an error
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to submit booking.');
+    // Save to sheets service (localStorage + Google Sheets if configured)
+    await sheetsService.saveBooking(formattedBookingData);
+
+    // Try to send to backend API (if available)
+    if (apiUrl) {
+      const response = await fetch(`${apiUrl}/bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      if (!response.ok) {
+        // If the server response is not OK, throw an error
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit booking.');
+      }
+
+      return await response.json();
+    } else {
+      // Return success response when no backend is configured
+      return {
+        success: true,
+        bookingId: bookingId,
+        message: 'Booking saved successfully to Excel sheet!',
+        data: formattedBookingData
+      };
     }
-
-    return await response.json();
   } catch (error) {
     console.error("Booking submission error:", error);
     // Re-throw the error to be handled by the component
@@ -126,20 +152,36 @@ export const deleteBooking = async (bookingId: string): Promise<void> => {
  */
 export const getBlockedDates = async (): Promise<BlockedDate[]> => {
   try {
-    const response = await fetch(`${apiUrl}/admin/blocked-dates`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch blocked dates');
+    // First try to get from localStorage (admin panel blocked dates)
+    const localBlockedDates = localStorage.getItem('blockedDates');
+    if (localBlockedDates) {
+      const dates = JSON.parse(localBlockedDates) as Date[];
+      return dates.map((date, index) => ({
+        id: `blocked_${index}`,
+        date: new Date(date).toISOString().split('T')[0], // Format as YYYY-MM-DD
+        reason: 'Blocked by admin'
+      }));
     }
 
-    return await response.json();
+    // Fallback: try API if localStorage is empty and API is available
+    if (apiUrl) {
+      const response = await fetch(`${apiUrl}/admin/blocked-dates`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+        },
+      });
+
+      if (response.ok) {
+        return await response.json();
+      }
+    }
+
+    // Return empty array if no data found
+    return [];
   } catch (error) {
     console.error("Failed to fetch blocked dates:", error);
-    throw error;
+    // Return empty array instead of throwing, so booking form still works
+    return [];
   }
 };
 

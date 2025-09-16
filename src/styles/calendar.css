@@ -1,0 +1,48 @@
+/* Custom Calendar Styles for Blocked Dates */
+
+/* Blocked date styling */
+.rdp-day.rdp-day_selected.blocked {
+  background-color: #fca5a5 !important;
+  color: #dc2626 !important;
+  font-weight: bold !important;
+  border: 2px solid #dc2626 !important;
+}
+
+/* Blocked date hover styling */
+.rdp-day.blocked:hover {
+  background-color: #f87171 !important;
+  color: #dc2626 !important;
+}
+
+/* Blocked date default styling */
+.rdp-day.blocked {
+  background-color: #fee2e2 !important;
+  color: #dc2626 !important;
+  font-weight: bold !important;
+  border: 2px solid #dc2626 !important;
+  border-radius: 50% !important;
+}
+
+/* Enhanced blocked date visibility */
+[data-blocked="true"] {
+  background-color: #fee2e2 !important;
+  color: #dc2626 !important;
+  font-weight: bold !important;
+  border: 2px solid #dc2626 !important;
+  border-radius: 50% !important;
+}
+
+/* Calendar container styling */
+.calendar-container .rdp-months {
+  display: flex;
+  justify-content: center;
+}
+
+/* Day button styling for blocked dates */
+.rdp-button_reset.rdp-button.rdp-day.blocked {
+  background-color: #fee2e2 !important;
+  color: #dc2626 !important;
+  font-weight: bold !important;
+  border: 2px solid #dc2626 !important;
+  border-radius: 50% !important;
+}

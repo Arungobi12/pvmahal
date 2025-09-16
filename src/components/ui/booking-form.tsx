@@ -87,9 +87,11 @@ const BookingForm = () => {
   }, []);
 
   const isDateBlocked = (date: Date) => {
-    return blockedDates.some(blocked => 
-      isSameDay(parseISO(blocked.date), date)
-    );
+    // Check both formats: from API (BlockedDate[]) and from localStorage (Date[])
+    return blockedDates.some(blocked => {
+      const blockedDate = new Date(blocked.date);
+      return isSameDay(blockedDate, date);
+    });
   };
 
   const handleNext = async () => {
@@ -213,6 +215,11 @@ const BookingForm = () => {
                                   </FormControl>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
+                                  <div className="p-3 border-b bg-gray-50">
+                                    <p className="text-sm text-gray-600">
+                                      🔴 <span className="text-red-600 font-semibold">Red dates</span> are blocked and unavailable for booking
+                                    </p>
+                                  </div>
                                   <Calendar
                                     mode="single"
                                     selected={field.value}
@@ -225,9 +232,11 @@ const BookingForm = () => {
                                     }}
                                     modifiersStyles={{
                                       blocked: { 
-                                        backgroundColor: '#fee2e2', 
-                                        color: '#dc2626',
-                                        textDecoration: 'line-through'
+                                        backgroundColor: '#dc2626', 
+                                        color: 'white',
+                                        textDecoration: 'line-through',
+                                        fontWeight: 'bold',
+                                        border: '2px solid #dc2626'
                                       }
                                     }}
                                     initialFocus

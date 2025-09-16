@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Updated Design System:
+  - Primary Color: Grand Dark Carpet Red
+  - Accent Color: Premium Gold for highlights and interactive elements
+  - Footer: Neutral black background in light mode
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    /* A neutral, near-black for the footer background. */
+    --foreground: 240 10% 12%; 
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 12%;
+
+    /* --- COLOR CHANGE START --- */
+    /* Primary color is now a grand, dark carpet red */
+    --primary: 355 45% 30%; /* Grand Dark Carpet Red */
+    --primary-foreground: 0 0% 98%; /* Light text for on top of the dark red */
+
+    /* Secondary color is a light, warm off-white */
+    --secondary: 30 50% 98%;
+    --secondary-foreground: 355 45% 30%;
+
+    --muted: 30 20% 94%;
+    --muted-foreground: 20 10% 40%;
+
+    /* Accent color remains a premium, rich gold */
+    --accent: 40 90% 55%;
+    --accent-foreground: 20 15% 20%; /* Dark text for on top of gold */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 20% 90%;
+    --input: 30 20% 90%;
+    --ring: 355 45% 30%;
+
+    /* Custom design tokens updated to the new dual-color theme */
+    --primary-gold: 40 90% 55%; /* The Premium Gold for accents */
+    --primary-gold-foreground: 20 15% 20%;
+    /* --primary-deep is gold to make gallery items react with gold */
+    --primary-deep: 40 90% 55%; 
+    
+    --gradient-hero: linear-gradient(135deg, hsl(355 45% 25%), hsl(355 40% 35%));
+    --gradient-accent: linear-gradient(135deg, hsl(40 90% 55%), hsl(40 80% 65%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(30 50% 98%));
+    --gradient-premium-gold: linear-gradient(135deg, hsl(40 90% 55%), hsl(40 80% 65%), hsl(40 70% 75%));
+    /* --- COLOR CHANGE END --- */
+    
+    --shadow-elegant: 0 10px 30px -10px hsl(355 45% 30% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(20 15% 20% / 0.1);
+    --shadow-glow: 0 0 40px hsl(40 90% 55% / 0.3);
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 20 15% 8%;
+    --foreground: 30 20% 95%;
+
+    --card: 20 15% 12%;
+    --card-foreground: 30 20% 95%;
+
+    --popover: 20 15% 8%;
+    --popover-foreground: 30 20% 95%;
+
+    /* --- DARK MODE COLOR CHANGE START --- */
+    --primary: 355 50% 45%; /* A brighter carpet red for dark mode */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 20 15% 15%;
+    --secondary-foreground: 30 20% 95%;
+
+    --muted: 20 15% 15%;
+    --muted-foreground: 30 10% 60%;
+
+    --accent: 40 90% 60%; /* A brighter gold for dark mode */
+    --accent-foreground: 20 15% 10%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 20 15% 15%;
+    --input: 20 15% 15%;
+    --ring: 355 50% 45%;
+
+    /* Dark mode custom tokens */
+    --primary-gold: 40 90% 60%;
+    --primary-gold-foreground: 20 15% 10%;
+    /* --primary-deep is gold to make gallery items react with gold */
+    --primary-deep: 40 90% 60%;
+    
+    --gradient-hero: linear-gradient(135deg, hsl(355 45% 25%), hsl(355 40% 35%));
+    --gradient-accent: linear-gradient(135deg, hsl(40 90% 60%), hsl(40 80% 70%));
+    --gradient-subtle: linear-gradient(180deg, hsl(20 15% 8%), hsl(20 15% 10%));
+    --gradient-premium-gold: linear-gradient(135deg, hsl(40 90% 60%), hsl(40 80% 70%), hsl(40 70% 80%));
+    
+    --shadow-elegant: 0 10px 30px -10px hsl(0 0% 0% / 0.5);
+    --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 40px hsl(40 90% 60% / 0.2);
+    /* --- DARK MODE COLOR CHANGE END --- */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

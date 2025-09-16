@@ -1,0 +1,15 @@
+[
+  {
+    "_id": "1758047106654",
+    "eventType": "wedding",
+    "eventDate": "2025-09-26T18:30:00.000Z",
+    "timeSlot": "morning",
+    "guestCount": 50,
+    "name": "ARUN GOBI S",
+    "email": "asadf@gmail.com",
+    "phone": "+917395817044",
+    "specialRequests": "",
+    "createdAt": "2025-09-16T18:25:06.655Z",
+    "updatedAt": "2025-09-16T18:25:06.655Z"
+  }
+]

@@ -1,10 +1,10 @@
 // src/components/ui/booking-form.tsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format, parseISO, isSameDay } from "date-fns";
 import { CalendarIcon, Users, Clock, Heart, ArrowLeft, Minus, Plus, Music, Sparkles } from "lucide-react";
 import { Button } from "./button";
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./form";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { createBooking } from "@/api/bookingService";
+import { createBooking, getBlockedDates, type BlockedDate } from "@/api/bookingService";
 import { siteImages } from "@/assets/images";
 
 const bookingSchema = z.object({
@@ -58,6 +58,7 @@ const timeSlots = [
 
 const BookingForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
@@ -69,6 +70,27 @@ const BookingForm = () => {
   });
 
   const { isSubmitting } = form.formState;
+
+  useEffect(() => {
+    // Fetch blocked dates when component mounts
+    const fetchBlockedDates = async () => {
+      try {
+        const dates = await getBlockedDates();
+        setBlockedDates(dates);
+      } catch (error) {
+        // Silently fail if not connected to backend
+        console.log("Could not fetch blocked dates:", error);
+      }
+    };
+    
+    fetchBlockedDates();
+  }, []);
+
+  const isDateBlocked = (date: Date) => {
+    return blockedDates.some(blocked => 
+      isSameDay(parseISO(blocked.date), date)
+    );
+  };
 
   const handleNext = async () => {
     const fields = steps[currentStep].fields;
@@ -196,8 +218,18 @@ const BookingForm = () => {
                                     selected={field.value}
                                     onSelect={field.onChange}
                                     disabled={(date) =>
-                                      date < new Date() || date < new Date("1900-01-01")
+                                      date < new Date() || date < new Date("1900-01-01") || isDateBlocked(date)
                                     }
+                                    modifiers={{
+                                      blocked: (date) => isDateBlocked(date)
+                                    }}
+                                    modifiersStyles={{
+                                      blocked: { 
+                                        backgroundColor: '#fee2e2', 
+                                        color: '#dc2626',
+                                        textDecoration: 'line-through'
+                                      }
+                                    }}
                                     initialFocus
                                   />
                                 </PopoverContent>
